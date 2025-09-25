@@ -1,0 +1,45 @@
+name: Daily scrape
+
+on:
+  schedule:
+    - cron: "0 3 * * *" # ежедневно в 03:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Use Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install parser deps
+        working-directory: parser
+        run: npm ci
+
+      - name: Run parser (limited safety)
+        working-directory: parser
+        run: |
+          node parse.js --maxPages 200 --concurrent 30 --perPage 20 --retries 2 --out ../frontend/public/cars.json
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if [ -n "$(git status --porcelain)" ]; then
+            git add frontend/public/cars.json
+            git commit -m "chore(data): daily cars.json update"
+            git push
+          else
+            echo "No changes to commit"
+          fi

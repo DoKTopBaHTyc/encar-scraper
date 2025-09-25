@@ -14,9 +14,7 @@ const PER_PAGE = Number(getCliOption("perPage", 20));
 const MAX_PAGES = Number(getCliOption("maxPages", 2000));
 const CONCURRENT = Number(getCliOption("concurrent", 30));
 const API_URL = String(getCliOption("api", DEFAULT_API_URL));
-const OUTPUT_FILE = String(
-  getCliOption("out", "../frontend/public/cars.json")
-);
+const OUTPUT_FILE = String(getCliOption("out", "../frontend/public/cars.json"));
 const RETRIES = Number(getCliOption("retries", 2));
 
 // поток для записи
@@ -32,7 +30,9 @@ async function fetchJsonWithRetry(url, options, attempts = RETRIES) {
       return await res.json();
     } catch (e) {
       const last = tryIndex === attempts;
-      console.warn(`⚠️ Повтор запроса (${tryIndex + 1}/${attempts + 1}): ${e.message}`);
+      console.warn(
+        `⚠️ Повтор запроса (${tryIndex + 1}/${attempts + 1}): ${e.message}`
+      );
       if (last) throw e;
       await new Promise((r) => setTimeout(r, 500 * (tryIndex + 1)));
     }
@@ -64,7 +64,9 @@ async function fetchPage(start, end) {
     }));
 
     if (results.length) {
-      console.log(`✅ Страница ${start}-${end}: найдено машин ${results.length}`);
+      console.log(
+        `✅ Страница ${start}-${end}: найдено машин ${results.length}`
+      );
     }
     return results;
   } catch (err) {
