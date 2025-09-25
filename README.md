@@ -58,7 +58,9 @@ node parse.js --maxPages 100 --concurrent 50 --perPage 20 --retries 3 --out ../f
 MIT
 
 ## Деплой на Vercel
+
 Вариант А (рекомендуется): деплой директории `frontend` как отдельного проекта
+
 1. Создайте новый проект на Vercel и выберите репозиторий.
 2. В настройках проекта:
    - Framework Preset: Create React App
@@ -68,13 +70,16 @@ MIT
 3. Сохраните и задеплойте. Данные берутся из `public/cars.json`.
 
 Вариант B: импорт через Vercel CLI
+
 ```bash
 cd frontend
 vercel --prod
 ```
 
 ## Автообновление данных раз в сутки
+
 В репозитории настроен workflow `.github/workflows/scrape.yml`:
+
 - по крону каждый день в 03:00 UTC запускает `parser/parse.js`;
 - перезаписывает `frontend/public/cars.json`;
 - коммитит изменения в репозиторий.
